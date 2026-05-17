@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView, useScroll, useSpring, useTransform } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 
 const steps = [
   {
@@ -40,28 +40,22 @@ function StepItem({ step, index }: { step: (typeof steps)[0]; index: number }) {
       initial={{ opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.9, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
-      className="relative pl-16 pb-20 last:pb-0"
+      className="text-center pb-20 last:pb-0"
     >
-      {/* Step dot */}
-      <motion.div
-        className="absolute left-0 top-0 w-10 h-10 rounded-full border border-border bg-bg flex items-center justify-center"
-        animate={inView ? { borderColor: "#C9A84C", backgroundColor: "#C9A84C" } : {}}
+      {/* Step number */}
+      <motion.span
+        animate={inView ? { color: "#C9A84C" } : { color: "#7A7570" }}
         transition={{ duration: 0.5, delay: 0.2 }}
+        className="block font-sans text-xs tracking-[0.3em] uppercase mb-5"
       >
-        <motion.span
-          animate={inView ? { color: "#1A1A1A" } : { color: "#7A7570" }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-[10px] font-sans font-medium"
-        >
-          {step.number}
-        </motion.span>
-      </motion.div>
+        {step.number}
+      </motion.span>
 
       <motion.h3
         initial={{ opacity: 0, y: 12 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-        className="font-serif font-normal text-text-primary leading-tight mb-4"
+        className="font-serif font-normal text-text-primary leading-tight mb-5"
         style={{ fontSize: "clamp(22px, 2vw, 34px)" }}
       >
         {step.title}
@@ -71,7 +65,7 @@ function StepItem({ step, index }: { step: (typeof steps)[0]; index: number }) {
         initial={{ opacity: 0, y: 8 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.7, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        className="font-sans text-text-muted text-base leading-[1.85] max-w-md"
+        className="font-sans text-text-muted text-base leading-[1.85] max-w-xs mx-auto"
       >
         {step.description}
       </motion.p>
@@ -81,18 +75,10 @@ function StepItem({ step, index }: { step: (typeof steps)[0]; index: number }) {
 
 export default function Process() {
   const titleRef = useRef<HTMLDivElement>(null);
-  const sectionRef = useRef<HTMLElement>(null);
   const titleInView = useInView(titleRef, { once: true, margin: "-15%" });
 
-  // Scroll-driven progressive line fill
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start 0.85", "end 0.6"],
-  });
-  const lineScaleY = useSpring(scrollYProgress, { stiffness: 60, damping: 20, restDelta: 0.001 });
-
   return (
-    <section ref={sectionRef} className="py-24 md:py-40 bg-bg px-8 md:px-16 lg:px-24">
+    <section className="py-24 md:py-40 bg-bg px-8 md:px-16 lg:px-24">
       <div className="max-w-3xl mx-auto">
 
         {/* Centered heading */}
@@ -120,21 +106,11 @@ export default function Process() {
           </div>
         </div>
 
-        {/* Timeline with scroll-driven gold fill */}
-        <div className="relative">
-          {/* Background track */}
-          <div className="absolute left-5 top-0 bottom-0 w-px bg-border" />
-          {/* Gold fill — grows with scroll */}
-          <motion.div
-            className="absolute left-5 top-0 bottom-0 w-px bg-gold origin-top"
-            style={{ scaleY: lineScaleY }}
-          />
-
-          <div className="space-y-0">
-            {steps.map((step, i) => (
-              <StepItem key={step.number} step={step} index={i} />
-            ))}
-          </div>
+        {/* Steps — 2-column centered grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-0">
+          {steps.map((step, i) => (
+            <StepItem key={step.number} step={step} index={i} />
+          ))}
         </div>
 
       </div>
